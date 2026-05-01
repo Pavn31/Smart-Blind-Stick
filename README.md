@@ -36,5 +36,4 @@ The Smart Blind Stick is an assistive device designed to help visually impaired 
 
 🤝 Contributing
 -Contributions are welcome! Feel free to fork the repo and submit a pull request.
-
-![Alt text](Circuit Image.png)
+![Smart Blind Stick Circuit](smart-blind-stick-circuit.png)
