@@ -22,6 +22,7 @@
 
 Keep your laptop ready with Arduino IDE installed.
 
+
 ***Step 1: Set Up the Brain (Arduino Nano):***
 
 *Think of the Arduino as the “brain” of your stick.*
@@ -31,6 +32,7 @@ Keep your laptop ready with Arduino IDE installed.
 -Don’t connect power yet
 
 -We’ll connect everything to this
+
 
 ***📡 Step 2: Connect Ultrasonic Sensor (Obstacle Detection):***
 
@@ -46,6 +48,7 @@ Keep your laptop ready with Arduino IDE installed.
 
 **👉 This sensor will measure distance and tell Arduino if something is close.**
 
+
 ***Step 3: Connect Water Sensor (Puddle Detection):***
 
 *This helps detect water on the ground.*
@@ -57,6 +60,7 @@ Keep your laptop ready with Arduino IDE installed.
 -Analog OUT → A0 (Analog pin)
 
 **👉 When it touches water, values change → Arduino triggers alert.**
+
 
 ***Step 4: Connect GPS Module (Location Tracking):***
 
@@ -71,6 +75,7 @@ Keep your laptop ready with Arduino IDE installed.
 -RX → Arduino TX (e.g., D5)
 
 **👉 GPS sends coordinates continuously.**
+
 
 ***Step 5: Connect GSM Module (SIM800L)***
 
@@ -88,6 +93,7 @@ Used to send SMS/location.
 
 **👉 This sends alerts like “Help needed” with GPS location.**
 
+
 ***Step 6: Connect Buzzer (Alert System):***
 
 -This gives sound alerts.
@@ -97,6 +103,7 @@ Used to send SMS/location.
 -Negative → GND
 
 **👉 Arduino will beep when obstacle/water is detected.**
+
 
 ***Step 7: Connect Display (Optional):***
 
@@ -111,6 +118,7 @@ Used to send SMS/location.
 -SCL → A5
 
 **👉 Shows distance, GPS data, etc.**
+
 
 ***Step 8: Power the System:***
 
@@ -128,9 +136,11 @@ Used to send SMS/location.
 
 -GSM has proper voltage (very important)
 
+
 ***Step 9: Upload Code:***
 
 **In Arduino IDE:**
+
 
 *1. Install libraries:*
 
@@ -139,6 +149,7 @@ Used to send SMS/location.
 -SoftwareSerial
 
 -Blynk (if using app)
+
 
 *2. Write or paste your code:*
 
@@ -152,13 +163,16 @@ Used to send SMS/location.
 
 -Trigger buzzer
 
+
 *3. Select:*
 
 -Board: Arduino Nano
 
 -Port: Correct COM port
 
+
 *4. Click Upload*
+
 
 ***Step 10: Test Like a Human Would***
 
