@@ -1,5 +1,4 @@
 ***Before You Start***
-
 *Make sure you have:*
 
 -Arduino Nano
