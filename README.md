@@ -42,4 +42,4 @@ Circuit Diagram/image:
 ![Smart Blind Stick Circuit](smart-blind-stick-circuit.png)
 
 
-[Steps to Build](steps-to-build.md)
+[Steps to Build](steps-to-build)
