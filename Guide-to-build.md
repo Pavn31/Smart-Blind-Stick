@@ -1,7 +1,9 @@
 ***Before You Start***
 *Make sure you have:*
 -Arduino Nano
+
 -HC-SR04 Ultrasonic Sensor
+
 -Water/Rain Sensor
 -GPS Module (NEO-6M)
 -GSM Module (SIM800L)
