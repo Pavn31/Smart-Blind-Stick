@@ -42,9 +42,9 @@ Keep your laptop ready with Arduino IDE installed.
 
 -GND → GND
 
--TRIG → Any digital pin (e.g., D3)
+-TRIG → Any digital pin 
 
--ECHO → Any digital pin (e.g., D2)
+-ECHO → Any digital pin 
 
 **👉 This sensor will measure distance and tell Arduino if something is close.**
 
@@ -70,9 +70,9 @@ Keep your laptop ready with Arduino IDE installed.
 
 -GND → GND
 
--TX → Arduino RX (use SoftwareSerial, e.g., D4)
+-TX → Arduino RX (use SoftwareSerial)
 
--RX → Arduino TX (e.g., D5)
+-RX → Arduino TX 
 
 **👉 GPS sends coordinates continuously.**
 
@@ -87,9 +87,8 @@ Used to send SMS/location.
 
 -GND → Common GND
 
--TX → Arduino RX (e.g., D7)
-
--RX → Arduino TX (e.g., D6)
+-TX → Arduino RX
+-RX → Arduino TX 
 
 **👉 This sends alerts like “Help needed” with GPS location.**
 
@@ -98,7 +97,7 @@ Used to send SMS/location.
 
 -This gives sound alerts.
 
--Positive → Digital pin (e.g., D8)
+-Positive → Digital pin
 
 -Negative → GND
 
