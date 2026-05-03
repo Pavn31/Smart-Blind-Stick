@@ -1,23 +1,3 @@
-/*
- * =============================================
- *        SMART BLIND STICK - C++ Version
- * =============================================
- * Components:
- *   - Arduino Nano (ATmega328P)
- *   - HC-SR04 Ultrasonic Sensor
- *   - Water/Rain Sensor Module
- *   - GPS Module (NEO-6M)
- *   - GSM Module (SIM800L)
- *   - Buzzer (Active)
- *   - 16x2 I2C LCD Display
- *   - 9V / Li-ion Battery
- *
- * Libraries Required:
- *   - TinyGPS++ by Mikal Hart
- *   - LiquidCrystal_I2C by Frank de Brabander
- * =============================================
- */
-
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 #include <TinyGPSPlus.h>
