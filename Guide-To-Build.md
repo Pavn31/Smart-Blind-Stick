@@ -2,7 +2,6 @@
 > An IoT-enabled assistive device for visually impaired individuals, featuring obstacle detection, water sensing, GPS tracking, and real-time smartphone alerts via GSM and Blynk.
 ![Arduino](https://img.shields.io/badge/Platform-Arduino%20Nano-00979D?style=flat-square&logo=arduino)
 ![Language](https://img.shields.io/badge/Language-Embedded%20C%2FC%2B%2B-blue?style=flat-square)
-![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=flat-square)
 ---
 📋 Table of Contents
