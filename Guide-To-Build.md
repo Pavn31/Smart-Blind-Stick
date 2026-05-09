@@ -199,8 +199,3 @@ Commit your changes: `git commit -m "Add: your feature description"`
 Push to the branch: `git push origin feature/your-feature-name`
 Open a Pull Request
 Please follow the existing code style and add comments for any new functionality.
----
-License
-This project is licensed under the MIT License — see the LICENSE file for details.
----
-<p align="center">Made with ❤️ to empower the visually impaired community</p>
