@@ -47,3 +47,7 @@ Follow the complete guide here:
 👉 [Steps to Build the Smart Blind Stick](Guide-To-Build.md)
 
 👉 [Arduino IDE C++ code](Code.cpp)
+
+***AI AGENTS USED:***
+**LAUDE AI**
+**ChatGPT**
