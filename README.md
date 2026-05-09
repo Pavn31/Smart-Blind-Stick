@@ -44,6 +44,6 @@ Circuit Diagram/image:
 
 ***🛠️ How to Build***
 Follow the complete guide here:  
-👉 [Steps to Build the Smart Blind Stick](Guide-to-build.md)
+👉 [Steps to Build the Smart Blind Stick](Guide-To-Build.md)
 
 👉 [Arduino IDE C++ code](Code.cpp)
