@@ -48,6 +48,8 @@ Follow the complete guide here:
 
 👉 [Arduino IDE C++ code](Code.cpp)
 
-***AI AGENTS USED:***
-**LAUDE AI**
-**ChatGPT**
+***--AI AGENTS USED:***
+
+**--CLAUDE AI**
+
+**--ChatGPT**
