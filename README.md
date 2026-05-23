@@ -48,4 +48,4 @@ Follow the complete guide here:
 
 👉 [Arduino IDE C++ code](Code.cpp)
 
-👉 [Project PDF: ](Smart Blind Stick.pdf)
+👉 [Project PDF: ](Smart-Blind-Stick.pdf)
