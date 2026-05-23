@@ -39,7 +39,7 @@ The Smart Blind Stick is an assistive device designed to help visually impaired 
 
 Circuit Diagram/image:
 
-![Smart Blind Stick Circuit](smart-blind-stick-circuit.png)
+![Smart Blind Stick Circuit]()
 
 
 ***🛠️ How to Build***
