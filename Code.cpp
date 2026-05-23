@@ -1,123 +1,192 @@
+/*
+ * Smart Monitoring System
+ * Components: HC-SR04 Ultrasonic, Water/Rain Sensor, GPS Neo-6M, GSM SIM800L, Buzzer
+ * Board: Arduino Nano
+ *
+ * Pin Mapping:
+ *   HC-SR04  : TRIG=D9,  ECHO=D10
+ *   Water    : AO=A0,    DO=D2
+ *   GPS      : TX=D4,    RX=D3   (SoftwareSerial)
+ *   GSM      : TX=D7,    RX=D8   (SoftwareSerial)
+ *   Buzzer   : D6
+ */
+
 #include <SoftwareSerial.h>
-#include <NewSoftSerial.h> // or SoftwareSerial if you don't have NewSoftSerial
-#include <TinyGPS++.h>
-#include <BlynkSimpleStream.h> // assuming Blynk is used for IoT interface
+#include <TinyGPSPlus.h>
 
-// Pins for HC-SR04 Ultrasonic Sensor
-const int trigPin = 9;
-const int echoPin = 10;
+// ─── Pin Definitions ────────────────────────────────────────────────
+#define TRIG_PIN        9
+#define ECHO_PIN        10
+#define WATER_AO_PIN    A0
+#define WATER_DO_PIN    2
+#define BUZZER_PIN      6
 
-// Water/Rain Sensor Pin
-const int waterSensorPin = A0;
+// ─── Serial Ports ───────────────────────────────────────────────────
+// GPS: Arduino listens on D4 (GPS TX), sends on D3 (GPS RX)
+SoftwareSerial gpsSerial(4, 3);      // RX=D4, TX=D3
 
-// Buzzer Pin
-const int buzzerPin = 6;
-
-// Small Display Screen (assuming using I2C OLED, use appropriate library accordingly)
-#include <Wire.h>
-#include <Adafruit_SSD1306.h>
-#define SCREEN_WIDTH 128
-#define SCREEN_HEIGHT 64
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
-
-// GPS Module pins
-static const int RXPin = 4, TXPin = 3;
-static const uint32_t GPSBaud = 9600;
+// GSM: Arduino listens on D7 (GSM TX), sends on D8 (GSM RX)
+SoftwareSerial gsmSerial(7, 8);      // RX=D7, TX=D8
 
 TinyGPSPlus gps;
-SoftwareSerial gpsSerial(RXPin, TXPin);
 
-// GSM Module pins
-SoftwareSerial gsmSerial(7, 8); // RX, TX for SIM800L or equivalent
+// ─── Configuration ──────────────────────────────────────────────────
+const char*   PHONE_NUMBER        = "+91XXXXXXXXXX"; // <-- Your number
+const int     DISTANCE_THRESHOLD  = 20;   // cm  — object too close
+const int     WATER_AO_THRESHOLD  = 500;  // 0-1023, above = wet
+const unsigned long ALERT_INTERVAL = 60000UL; // min gap between SMS (ms)
 
-// Variables
-long duration;
-int distance;
+// ─── State ──────────────────────────────────────────────────────────
+unsigned long lastAlertTime       = 0;
+bool          gsmReady            = false;
 
+// ════════════════════════════════════════════════════════════════════
 void setup() {
   Serial.begin(9600);
-  gpsSerial.begin(GPSBaud);
+  gpsSerial.begin(9600);
   gsmSerial.begin(9600);
 
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
-  pinMode(waterSensorPin, INPUT);
-  pinMode(buzzerPin, OUTPUT);
+  pinMode(TRIG_PIN,     OUTPUT);
+  pinMode(ECHO_PIN,     INPUT);
+  pinMode(WATER_DO_PIN, INPUT);
+  pinMode(BUZZER_PIN,   OUTPUT);
 
-  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { 
-    Serial.println(F("SSD1306 allocation failed"));
-    for(;;);
-  }
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(SSD1306_WHITE);
-  display.setCursor(0,0);
-  display.print("Starting...");
-  display.display();
+  digitalWrite(BUZZER_PIN, LOW);
 
-  // GSM module initialization - basic check
-  gsmSerial.println("AT");
-  delay(100);
+  Serial.println(F("=== Smart Monitoring System Starting ==="));
+
+  initGSM();
 }
 
+// ════════════════════════════════════════════════════════════════════
 void loop() {
-  // Ultrasonic Sensor Reading
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
-
-  duration = pulseIn(echoPin, HIGH);
-  distance = duration * 0.034 / 2;
-
-  // Water Sensor Reading
-  int waterValue = analogRead(waterSensorPin);
-
-  // GPS Data Read
-  while (gpsSerial.available() > 0) {
+  // 1. Feed GPS data
+  while (gpsSerial.available())
     gps.encode(gpsSerial.read());
-  }
 
-  // Output to Display
-  display.clearDisplay();
-  display.setCursor(0,0);
-  display.print("Distance: ");
-  display.print(distance);
-  display.println(" cm");
-  
-  display.print("Water: ");
-  display.println(waterValue);
+  // 2. Read sensors
+  float    distance   = readUltrasonic();
+  int      waterAO    = analogRead(WATER_AO_PIN);
+  bool     waterDO    = digitalRead(WATER_DO_PIN) == LOW; // LOW = wet
+  bool     objectNear = (distance > 0 && distance < DISTANCE_THRESHOLD);
+  bool     isWet      = waterDO || (waterAO > WATER_AO_THRESHOLD);
 
-  if (gps.location.isValid()) {
-    display.print("Lat: ");
-    display.println(gps.location.lat(), 6);
-    display.print("Lng: ");
-    display.println(gps.location.lng(), 6);
+  // 3. Debug output
+  Serial.print(F("Dist: ")); Serial.print(distance);  Serial.print(F(" cm | "));
+  Serial.print(F("WaterAO: ")); Serial.print(waterAO); Serial.print(F(" | "));
+  Serial.print(F("WaterDO: ")); Serial.print(waterDO ? "WET" : "DRY"); Serial.print(F(" | "));
+  Serial.print(F("GPS fix: ")); Serial.println(gps.location.isValid() ? "YES" : "NO");
+
+  // 4. Alert logic
+  bool alertNeeded = objectNear || isWet;
+  unsigned long now = millis();
+
+  if (alertNeeded) {
+    activateBuzzer(true);
+
+    // Send SMS at most once per ALERT_INTERVAL
+    if (gsmReady && (now - lastAlertTime >= ALERT_INTERVAL)) {
+      String message = buildAlertMessage(objectNear, isWet, distance, waterAO);
+      sendSMS(PHONE_NUMBER, message);
+      lastAlertTime = now;
+    }
   } else {
-    display.println("No GPS Fix");
-  }
-  
-  display.display();
-
-  // GSM Module communication example: send SMS if water detected (example threshold)
-  if (waterValue < 500) { // Adjust the threshold depending on your sensor reading
-    sendSMS("Water detected!");
-    digitalWrite(buzzerPin, HIGH);  // Turn buzzer ON
-  } else {
-    digitalWrite(buzzerPin, LOW);   // Turn buzzer OFF
+    activateBuzzer(false);
   }
 
-  delay(2000);
+  delay(500);
 }
 
-void sendSMS(String msg) {
-  gsmSerial.println("AT+CMGF=1");  // Set SMS to text mode
-  delay(100);
-  gsmSerial.println("AT+CMGS=\"+1234567890\""); // Change to your phone number
-  delay(100);
-  gsmSerial.println(msg);
-  delay(100);
-  gsmSerial.write(26); // ASCII code of CTRL+Z to send SMS
-  delay(5000);
+// ─── HC-SR04 ────────────────────────────────────────────────────────
+float readUltrasonic() {
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+
+  long duration = pulseIn(ECHO_PIN, HIGH, 30000UL); // 30ms timeout
+  if (duration == 0) return -1.0;                   // no echo
+  return duration * 0.034 / 2.0;
+}
+
+// ─── Buzzer ─────────────────────────────────────────────────────────
+void activateBuzzer(bool state) {
+  digitalWrite(BUZZER_PIN, state ? HIGH : LOW);
+}
+
+// ─── GSM Init ───────────────────────────────────────────────────────
+void initGSM() {
+  Serial.println(F("Initializing GSM..."));
+  delay(3000); // wait for SIM800L to boot
+
+  sendAT("AT", 2000);            // basic check
+  sendAT("AT+CMGF=1", 1000);     // text mode SMS
+  sendAT("AT+CSCS=\"GSM\"", 1000);
+
+  gsmReady = true;
+  Serial.println(F("GSM Ready."));
+}
+
+// ─── Send AT Command ────────────────────────────────────────────────
+String sendAT(const char* cmd, unsigned int timeout) {
+  gsmSerial.println(cmd);
+  unsigned long t = millis();
+  String resp = "";
+  while (millis() - t < timeout) {
+    while (gsmSerial.available())
+      resp += (char)gsmSerial.read();
+  }
+  Serial.print(F("[GSM] ")); Serial.print(cmd);
+  Serial.print(F(" -> ")); Serial.println(resp);
+  return resp;
+}
+
+// ─── Send SMS ───────────────────────────────────────────────────────
+void sendSMS(const char* number, String message) {
+  Serial.print(F("Sending SMS to ")); Serial.println(number);
+
+  gsmSerial.print(F("AT+CMGS=\""));
+  gsmSerial.print(number);
+  gsmSerial.println(F("\""));
+  delay(1000);
+
+  gsmSerial.print(message);
+  delay(500);
+
+  gsmSerial.write(26); // Ctrl+Z  — send
+  delay(3000);
+  Serial.println(F("SMS sent."));
+}
+
+// ─── Build Alert Message ────────────────────────────────────────────
+String buildAlertMessage(bool objectNear, bool isWet,
+                         float distance, int waterAO) {
+  String msg = "ALERT!\n";
+
+  if (objectNear) {
+    msg += "Object detected at ";
+    msg += String(distance, 1);
+    msg += " cm\n";
+  }
+  if (isWet) {
+    msg += "Water/Rain detected (AO=";
+    msg += String(waterAO);
+    msg += ")\n";
+  }
+
+  // Append GPS if available
+  if (gps.location.isValid()) {
+    msg += "Location:\n";
+    msg += "Lat: ";  msg += String(gps.location.lat(), 6); msg += "\n";
+    msg += "Lng: ";  msg += String(gps.location.lng(), 6); msg += "\n";
+    msg += "https://maps.google.com/?q=";
+    msg += String(gps.location.lat(), 6);
+    msg += ",";
+    msg += String(gps.location.lng(), 6);
+  } else {
+    msg += "GPS: No fix yet";
+  }
+
+  return msg;
 }
