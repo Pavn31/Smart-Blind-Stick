@@ -47,3 +47,5 @@ Follow the complete guide here:
 👉 [Steps to Build the Smart Blind Stick](Guide-To-Build.md)
 
 👉 [Arduino IDE C++ code](Code.cpp)
+
+👉 [Project PDF: ](Smart Blind Stick.pdf)
