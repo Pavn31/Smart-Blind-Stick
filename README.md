@@ -167,7 +167,7 @@ Smart-Monitoring-System/
 ## Quick Links:
 - [🔨 Build Guide:](Guide-To-Build.md)
 - [💻 Source Code:](Code.cpp)
-- [📥 Prohect Presentation:](Project.pptx)
+- [📥 Project Presentation:](Project.pptx)
 
 
 ### ⭐ Star this repository if you found it useful!
