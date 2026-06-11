@@ -164,6 +164,39 @@ Smart-Monitoring-System/
 
 ---
 
+## System Architecture
+
+```text
+                    ┌─────────────────┐
+                    │ Ultrasonic      │
+                    │ Sensor (HC-SR04)│
+                    └────────┬────────┘
+                             │
+                             ▼
+                    ┌─────────────────┐
+                    │   Arduino UNO   │
+                    │   Controller    │
+                    └───┬─────┬─────┬─┘
+                        │     │     │
+            ┌───────────┘     │     └───────────┐
+            ▼                 ▼                 ▼
+
+    ┌─────────────┐   ┌─────────────┐   ┌─────────────┐
+    │   Buzzer    │   │  GPS Module │   │ GSM Module  │
+    │ Alert System│   │ (Location)  │   │ (SIM800L)   │
+    └──────┬──────┘   └──────┬──────┘   └──────┬──────┘
+           │                 │                 │
+           ▼                 │                 ▼
+
+   Obstacle Alert            │        SMS Alert to
+   for Visually              │        Emergency
+   Impaired User             │        Contact
+
+                             ▼
+                    Real-Time Location
+                        Tracking
+```
+
 ## Quick Links:
 - [🔨 Build Guide:](Guide-To-Build.md)
 - [💻 Source Code:](Code.cpp)
