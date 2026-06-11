@@ -164,4 +164,9 @@ Smart-Monitoring-System/
 
 ---
 
+## Quick Links:
+- [🔨 Build Guide](Guide-To-Build.md)
+- [💻 Source Code](Code.cpp)
+
+
 ### ⭐ Star this repository if you found it useful!
