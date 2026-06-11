@@ -6,7 +6,7 @@
 
 ## 📷 Circuit Diagram
 
-![Smart Monitoring System](Smart-Blind-Stick-Circuit-System.png)
+![Smart Monitoring System](Circuit-Diagram.png)
 
 ---
 
