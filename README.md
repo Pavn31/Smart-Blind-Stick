@@ -164,9 +164,4 @@ Smart-Monitoring-System/
 
 ---
 
-## Circuit Diagram
-
-![Circuit Diagram](images/Smart-Blind-Stick-Circuit-System.png)
----
-
 ### ⭐ Star this repository if you found it useful!
