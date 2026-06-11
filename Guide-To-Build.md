@@ -22,7 +22,7 @@ This guide explains how to assemble and test the Smart Monitoring System using A
 
 ## 🖼 Circuit Diagram
 
-![Circuit Diagram](Smart-Blind-Stick-Circuit-System.png)
+![Circuit Diagram](Circuit-Diagram.png)
 
 ---
 
